@@ -26,10 +26,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email", "birth_day"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "email", "phone", "birth_day", "role"]
 
     def __str__(self):
-        return self.email
+        return f"{self.first_name[0]}.{self.last_name}"
 
     class Meta:
         db_table = "user"
+
