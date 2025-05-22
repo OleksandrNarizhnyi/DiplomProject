@@ -11,7 +11,7 @@ class Rental(models.Model):
     address = models.OneToOneField(
         Address,
         on_delete=models.PROTECT,
-        related_name="rental"
+        related_name="rental",
     )
     price = models.DecimalField(
         max_digits=6,
