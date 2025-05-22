@@ -130,6 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'booking.paginators.CustomCursorPagination',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
