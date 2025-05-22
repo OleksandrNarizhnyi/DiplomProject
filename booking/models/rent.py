@@ -1,6 +1,8 @@
 from django.db import models
+from django.utils import timezone
 
 from booking.choices.room_type import RoomType
+from booking.managers.rent import SoftDeleteManager
 from booking.models import User
 from booking.models.address import Address
 
@@ -31,6 +33,14 @@ class Rental(models.Model):
     deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
+
+    objects = SoftDeleteManager()
+
+    def delete(self, *args, **kwargs):
+        self.deleted = True
+        self.deleted_at = timezone.now()
+
+        self.save()
 
     def __str__(self):
         return self.title
