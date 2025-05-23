@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from booking.views.rent import RentalListCreateView
+from booking.views.rent import RentalListCreateView, RentalRetrieveUpdateDeleteView
 from booking.views.user import (
     RegisterUserAPIView,
     LogInAPIView,
@@ -29,5 +29,6 @@ urlpatterns = [
     path('login/', LogInAPIView.as_view()),
     path('logout/', LogOutAPIView.as_view()),
     path('register/', RegisterUserAPIView.as_view()),
-    path('rental/', RentalListCreateView.as_view())
+    path('rental/', RentalListCreateView.as_view()),
+    path('rental/<int:pk>/', RentalRetrieveUpdateDeleteView.as_view()),
 ]
