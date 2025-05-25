@@ -7,7 +7,7 @@ from booking.models.rent import Rental
 
 
 class Booking(models.Model):
-    renter = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.PROTECT,
         related_name='bookings',

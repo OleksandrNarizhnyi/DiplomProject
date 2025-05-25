@@ -14,12 +14,10 @@ class BookingListSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(
         slug_field='username',
         queryset=User.objects.filter(role="RENTER").all(),
-        read_only=True
     )
     rental = serializers.SlugRelatedField(
         slug_field='title',
         queryset=Rental.objects.all(),
-        read_only=True
     )
 
     class Meta:
@@ -52,7 +50,7 @@ class BookingCreateUpdateSerializer(serializers.ModelSerializer):
             'id', 'rental', 'start_date', 'end_date',
             'total_price', 'is_confirmed', 'is_cancelled'
         ]
-        read_only_fields = ['total_price', 'is_confirmed', 'is_cancelled']
+        read_only_fields = ['total_price',]
 
     def validate(self, data):
         if not self.instance:
