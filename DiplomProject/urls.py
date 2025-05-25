@@ -17,6 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from booking.views.booking import (
+    BookingListCreateView,
+    BookingRetrieveUpdateView,
+    confirm_booking,
+    reject_booking,
+    )
 from booking.views.rent import RentalListCreateView, RentalRetrieveUpdateDeleteView
 from booking.views.user import (
     RegisterUserAPIView,
@@ -31,4 +37,9 @@ urlpatterns = [
     path('register/', RegisterUserAPIView.as_view()),
     path('rental/', RentalListCreateView.as_view()),
     path('rental/<int:pk>/', RentalRetrieveUpdateDeleteView.as_view()),
+
+    path('booking/', BookingListCreateView.as_view()),
+    path('booking/<int:pk>/', BookingRetrieveUpdateView.as_view()),
+    path('booking/<int:pk>/confirm/', confirm_booking),
+    path('booking/<int:pk>/reject/', reject_booking),
 ]

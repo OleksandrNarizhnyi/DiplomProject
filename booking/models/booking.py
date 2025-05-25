@@ -28,6 +28,7 @@ class Booking(models.Model):
     )
     is_confirmed = models.BooleanField(default=False, verbose_name='Confirmed')
     is_cancelled = models.BooleanField(default=False, verbose_name='Cancelled')
+    booked = models.BooleanField(default=False, verbose_name='Booked')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -37,6 +38,8 @@ class Booking(models.Model):
             status = "Cancelled"
         elif self.is_confirmed:
             status = "Confirmed"
+        elif self.booked:
+            status = "Booked"
         return f"Booking #{self.id} - {self.rental.title} ({status})"
 
     def clean(self):
@@ -46,7 +49,7 @@ class Booking(models.Model):
         if self.start_date < timezone.now().date():
             raise ValidationError("Cannot book in the past.")
 
-        if not self.is_cancelled:
+        if not self.is_cancelled and self.booked:
             overlapping_bookings = Booking.objects.filter(
                 rental=self.rental,
                 start_date__lt=self.end_date,
@@ -62,8 +65,14 @@ class Booking(models.Model):
             nights = (self.end_date - self.start_date).days
             self.total_price = self.rental.price * nights
 
+        if self.is_confirmed and not self.is_cancelled:
+            self.booked = True
+        else:
+            self.booked = False
+
         if self.is_confirmed and self.is_cancelled:
             self.is_confirmed = False
+            self.booked = False
 
         super().save(*args, **kwargs)
 

@@ -5,7 +5,7 @@ from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
 from booking.models.rent import Rental
-from booking.permissions.lessor_permissions import IsRentalOwnerOrReadOnly
+from booking.permissions.custom_permissions import IsRentalOwnerOrReadOnly
 from booking.serializers.rent import (
     RentalListSerializer,
     RentalCreateUpdateSerializer,
