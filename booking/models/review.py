@@ -29,8 +29,6 @@ class Review(models.Model):
         Booking,
         on_delete=models.PROTECT,
         related_name='review',
-        null=True,
-        blank=True
     )
     rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     comment = models.TextField(max_length=500, blank=True)
