@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework import status, filters
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
@@ -74,21 +74,35 @@ class BookingRetrieveUpdateView(RetrieveUpdateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsLessor, IsPropertyLessor])
-def confirm_booking(request, pk):
-    booking = Booking.objects.get(pk=pk)
-    booking.is_confirmed = True
-    booking.is_cancelled = False
-    booking.save()
-    return Response({"status": "confirmed"}, status=status.HTTP_200_OK)
+class ConfirmBookingView(UpdateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingCreateUpdateSerializer
+    permission_classes = [IsPropertyLessor]
+    http_method_names = ['patch']
 
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsLessor, IsPropertyLessor])
-def reject_booking(request, pk):
-    booking = Booking.objects.get(pk=pk)
-    booking.is_confirmed = False
-    booking.is_cancelled = True
-    booking.save()
-    return Response({"status": "rejected"}, status=status.HTTP_200_OK)
+    def perform_update(self, serializer):
+        serializer.save(is_confirmed=True, is_cancelled=False)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data={}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({"status": "confirmed"}, status=status.HTTP_200_OK)
+
+class RejectBookingView(UpdateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingCreateUpdateSerializer
+    permission_classes = [IsPropertyLessor]
+    http_method_names = ['patch']
+
+    def perform_update(self, serializer):
+        serializer.save(is_confirmed=False, is_cancelled=True)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data={}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({"status": "rejected"}, status=status.HTTP_200_OK)
 
