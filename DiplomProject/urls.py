@@ -30,6 +30,7 @@ from booking.views.rent import (
 from booking.views.review import (
     ReviewListCreateView,
     ReviewRetrieveUpdateView,
+    RentalReviewsView,
 )
 from booking.views.user import (
     RegisterUserAPIView,
@@ -44,6 +45,7 @@ urlpatterns = [
     path('register/', RegisterUserAPIView.as_view()),
     path('rental/', RentalListCreateView.as_view()),
     path('rental/<int:pk>/', RentalRetrieveUpdateDeleteView.as_view()),
+    path('rental/<int:pk>/reviews/', RentalReviewsView.as_view()),
 
     path('booking/', BookingListCreateView.as_view()),
     path('booking/<int:pk>/', BookingRetrieveUpdateView.as_view()),
