@@ -29,7 +29,8 @@ from booking.views.rent import (
     )
 from booking.views.review import (
     ReviewListCreateView,
-    )
+    ReviewRetrieveUpdateView,
+)
 from booking.views.user import (
     RegisterUserAPIView,
     LogInAPIView,
@@ -49,5 +50,6 @@ urlpatterns = [
     path('booking/<int:pk>/confirm/', confirm_booking),
     path('booking/<int:pk>/reject/', reject_booking),
 
-path('reviews/', ReviewListCreateView.as_view()),
+    path('reviews/', ReviewListCreateView.as_view()),
+    path('reviews/<int:pk>.', ReviewRetrieveUpdateView.as_view()),
 ]
