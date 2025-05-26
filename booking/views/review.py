@@ -10,6 +10,10 @@ from booking.serializers.review import ReviewListSerializer, ReviewCreateUpdateS
 
 
 class ReviewListCreateView(ListCreateAPIView):
+    queryset = Review.objects.select_related(
+        'user', 'rental',
+    ).all()
+
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return ReviewListSerializer
@@ -41,3 +45,11 @@ class ReviewRetrieveUpdateView(RetrieveUpdateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RentalReviewsView(ListAPIView):
+    serializer_class = ReviewListSerializer
+
+    def get_queryset(self):
+        rental_id = self.kwargs.get('pk')
+        return Review.objects.filter(rental_id=rental_id).order_by('-created_at')
