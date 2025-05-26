@@ -23,9 +23,8 @@ from drf_yasg import openapi
 from booking.views.booking import (
     BookingListCreateView,
     BookingRetrieveUpdateView,
-    confirm_booking,
-    reject_booking,
-    )
+    ConfirmBookingView, RejectBookingView,
+)
 from booking.views.rent import (
     RentalListCreateView,
     RentalRetrieveUpdateDeleteView,
@@ -62,15 +61,15 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0)),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0)),
 
-    path('rental/', RentalListCreateView.as_view()),
-    path('rental/<int:pk>/', RentalRetrieveUpdateDeleteView.as_view()),
-    path('rental/<int:pk>/reviews/', RentalReviewsView.as_view()),
+    path('rental/', RentalListCreateView.as_view(), name='rental-list-create'),
+    path('rental/<int:pk>/', RentalRetrieveUpdateDeleteView.as_view(), name='rental-retrieve-update-delete'),
+    path('rental/<int:pk>/reviews/', RentalReviewsView.as_view(), name='rental-reviews'),
 
-    path('booking/', BookingListCreateView.as_view()),
-    path('booking/<int:pk>/', BookingRetrieveUpdateView.as_view()),
-    path('booking/<int:pk>/confirm/', confirm_booking),
-    path('booking/<int:pk>/reject/', reject_booking),
+    path('booking/', BookingListCreateView.as_view(), name='booking-list-create'),
+    path('booking/<int:pk>/', BookingRetrieveUpdateView.as_view(), name='booking-retrieve-update'),
+    path('booking/<int:pk>/confirm/', ConfirmBookingView.as_view(), name='booking-confirm'),
+    path('booking/<int:pk>/reject/', RejectBookingView.as_view(), name='booking-reject'),
 
-    path('reviews/', ReviewListCreateView.as_view()),
-    path('reviews/<int:pk>.', ReviewRetrieveUpdateView.as_view()),
+    path('reviews/', ReviewListCreateView.as_view(), name='reviews-list-create'),
+    path('reviews/<int:pk>.', ReviewRetrieveUpdateView.as_view(), name='reviews-retrieve-update'),
 ]
