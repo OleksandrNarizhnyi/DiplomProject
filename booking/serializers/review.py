@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
-from booking.models import User
-from booking.models.rent import Rental
 from booking.models.review import Review
 
 
