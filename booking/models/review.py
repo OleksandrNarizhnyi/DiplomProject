@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 from booking.models import User
 from booking.models.booking import Booking
@@ -37,6 +38,12 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user} for {self.rental}"
+
+    def clean(self):
+        super().clean()
+
+        if self.booking and (self.booking.user != self.user or self.booking.rental != self.rental):
+            raise ValidationError("Booking must belong to the user and be for the same rental")
 
     class Meta:
         db_table = "review"
