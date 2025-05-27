@@ -10,18 +10,23 @@ from booking.serializers.rent import (
     RentalListSerializer,
     RentalCreateUpdateSerializer,
     )
+from booking.utils.filters import RentalFilter
 
 
 class RentalListCreateView(ListCreateAPIView):
     queryset = Rental.objects.select_related(
         'address', 'lessor'
-    ).all()
+    ).filter(
+        deleted=False,
+        is_active=True,
+    )
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter
     ]
-    filterset_fields = ['address__land', 'address__city',]
+    filterset_class = RentalFilter
+    #filterset_fields = ['address__land', 'address__city',]
     search_fields = ['title', 'description']
     ordering_fields = ['price']
 
