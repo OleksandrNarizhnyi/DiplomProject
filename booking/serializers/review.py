@@ -5,10 +5,7 @@ from booking.models.review import Review
 
 
 class ReviewListSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-    )
+    user = serializers.StringRelatedField()
     rental = serializers.SlugRelatedField(
         slug_field='title',
         read_only=True,

@@ -26,9 +26,8 @@ class RentalListCreateView(ListCreateAPIView):
         filters.OrderingFilter
     ]
     filterset_class = RentalFilter
-    #filterset_fields = ['address__land', 'address__city',]
     search_fields = ['title', 'description']
-    ordering_fields = ['price']
+    ordering_fields = ['price', 'created_at']
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
