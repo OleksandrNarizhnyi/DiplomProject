@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 
+from booking.models.address import Address
 from booking.models.rent import Rental
 from booking.serializers.address import AddressInfoSerializer
 
@@ -26,6 +27,8 @@ class RentalListSerializer(serializers.ModelSerializer):
 
 
 class RentalCreateUpdateSerializer(serializers.ModelSerializer):
+    address = AddressInfoSerializer()
+
     class Meta:
         model = Rental
         fields = [
@@ -53,9 +56,33 @@ class RentalCreateUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        validated_data['lessor'] = self.context['request'].user
-        return super().create(validated_data)
+        request = self.context.get('request')
+        address_data = validated_data.pop('address')
+
+        address = Address.objects.create(**address_data)
+
+        rental = Rental.objects.create(
+            address=address,
+            lessor=request.user,
+            **validated_data
+        )
+        return rental
 
     def update(self, instance, validated_data):
+        request = self.context.get('request')
+        address_data = validated_data.pop('address', None)
+
+        instance = super().update(instance, validated_data)
         instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
+
+        if address_data:
+            address_serializer = AddressInfoSerializer(
+                instance.address,
+                data=address_data,
+                partial=True
+            )
+            address_serializer.is_valid(raise_exception=True)
+            address_serializer.save()
+
+        instance.save()
+        return instance
