@@ -59,26 +59,58 @@ class BookingCreateUpdateSerializer(serializers.ModelSerializer):
                     {"rental": "Rental property is required"}
                 )
 
-            if data['start_date'] >= data['end_date']:
+            start_date = data['start_date']
+            end_date = data['end_date']
+            user = self.context['request'].user
+
+            if start_date >= end_date:
                 raise serializers.ValidationError(
                     {"dates": "Check-out date must be after check-in date"}
                 )
 
-            if data['start_date'] < timezone.now().date():
+            if start_date < timezone.now().date():
                 raise serializers.ValidationError(
                     {"dates": "Cannot book for past dates"}
                 )
 
-        if self.instance and 'is_cancelled' in data and data['is_cancelled']:
-            if self.instance.is_confirmed:
+            overlapping = Booking.objects.filter(
+                rental=data['rental'],
+                start_date__lt=end_date,
+                end_date__gt=start_date,
+                is_cancelled=False
+            ).exists()
+            if overlapping:
                 raise serializers.ValidationError(
-                    {"cancellation": "Cannot cancel already confirmed booking"}
+                    {"dates": "The property is already booked for these dates"}
                 )
 
-            if (self.instance.start_date - timezone.now().date()) <= timedelta(days=3):
+            user_overlapping = Booking.objects.filter(
+                user=user,
+                start_date__lt=end_date,
+                end_date__gt=start_date,
+                is_cancelled=False
+            ).exists()
+            if user_overlapping:
                 raise serializers.ValidationError(
-                    {"cancellation": "Cancellation is only possible 3+ days before check-in"}
+                    {"dates": "You already have an active booking for these dates"}
                 )
+
+        else:
+            if 'is_confirmed' in data and data['is_confirmed'] != self.instance.is_confirmed:
+                raise serializers.ValidationError(
+                    {"confirmation": "Only lessor can confirm bookings"}
+                )
+
+            if 'is_cancelled' in data and data['is_cancelled']:
+                if self.instance.is_confirmed:
+                    raise serializers.ValidationError(
+                        {"cancellation": "Cannot cancel already confirmed booking"}
+                    )
+
+                if (self.instance.start_date - timezone.now().date()).days <= 3:
+                    raise serializers.ValidationError(
+                        {"cancellation": "Cancellation is only possible 3+ days before check-in"}
+                    )
 
         return data
 
