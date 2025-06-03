@@ -44,8 +44,8 @@ class ReviewCreateUpdateSerializer(serializers.ModelSerializer):
         rental = attrs.get('rental', getattr(self.instance, 'rental', None))
         booking = attrs.get('booking', getattr(self.instance, 'booking', None))
 
-        if self.instance is None and request.user.role != 'RENTER':
-            raise PermissionDenied("Only users with the role 'RENTER' can create reviews")
+        # if self.instance is None and request.user.role != 'RENTER':
+        #     raise PermissionDenied("Only users with the role 'RENTER' can create reviews")
 
         if self.instance and self.instance.user != request.user:
             raise PermissionDenied("You can only edit your reviews")
