@@ -30,7 +30,7 @@ class ReviewRetrieveUpdateView(RetrieveUpdateAPIView):
 
     def get_permissions(self):
         if self.request.method == 'PATCH':
-            return [IsBookingOwner()]
+            return [IsAuthenticated(), IsBookingOwner()]
         return [IsAuthenticated()]
 
     def perform_update(self, serializer):

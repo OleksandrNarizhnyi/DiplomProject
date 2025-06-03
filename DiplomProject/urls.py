@@ -71,5 +71,5 @@ urlpatterns = [
     path('booking/<int:pk>/reject/', RejectBookingView.as_view(), name='booking-reject'),
 
     path('reviews/', ReviewListCreateView.as_view(), name='reviews-list-create'),
-    path('reviews/<int:pk>.', ReviewRetrieveUpdateView.as_view(), name='reviews-retrieve-update'),
+    path('reviews/<int:pk>/', ReviewRetrieveUpdateView.as_view(), name='reviews-retrieve-update'),
 ]

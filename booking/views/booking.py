@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.db.models import Q
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
@@ -7,35 +8,42 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, Up
 from rest_framework import status, filters
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action, api_view, permission_classes
 
 from booking.models.booking import Booking
 from booking.serializers.booking import BookingListSerializer, BookingCreateUpdateSerializer
-from booking.permissions.custom_permissions import IsRenter, IsLessor, IsBookingOwner, IsPropertyLessor
+from booking.permissions.custom_permissions import IsBookingOwner, IsPropertyLessor
 
 class BookingListCreateView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    filterset_fields = ['rental', 'start_date', 'end_date']
+    search_fields = ['rental', 'start_date', 'end_date']
+    ordering_fields = ['start_date', 'end_date']
+
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
             return BookingListSerializer
         return BookingCreateUpdateSerializer
 
-    def get_permissions(self):
-        if self.request.method == 'PATCH':
-            return [permission() for permission in [IsAuthenticated, IsRenter]]
-        return [permission() for permission in [IsAuthenticated]]
+    # def get_permissions(self):
+    #     if self.request.method == 'PATH':
+    #         return [permission() for permission in [IsAuthenticated, IsRenter]]
+    #     return [permission() for permission in [IsAuthenticated]]
 
 
     def get_queryset(self):
-        queryset = Booking.objects.all()
+        queryset = Booking.objects.select_related('user', 'rental__lessor')
         user = self.request.user
 
-        if user.role == "RENTER":
-            return queryset.filter(user=user)
-        elif user.role == "LESSOR":
-            return queryset.filter(rental__lessor=user)
-        elif user.role == "ADMIN":
+        if user.is_superuser:
             return queryset
-        return queryset.none()
+        return queryset.filter(Q(user=user) | Q(rental__lessor=user))
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

@@ -11,14 +11,8 @@ from booking.models.rent import Rental
 class BookingListSerializer(serializers.ModelSerializer):
     can_cancel = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
-    user = serializers.SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.filter(role="RENTER").all(),
-    )
-    rental = serializers.SlugRelatedField(
-        slug_field='title',
-        queryset=Rental.objects.all(),
-    )
+    user = serializers.StringRelatedField(read_only=True)
+    rental = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Booking
