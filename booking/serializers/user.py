@@ -35,13 +35,13 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
         if not re.match(r'^[a-zA-Z0-9_]*$', username):
             raise serializers.ValidationError(
-                {"username": "Ник должен содержать символы латиницы, цифры и нижнее подчеркивание"})
+                {"username": "Username must contain Latin characters, numbers and underscores"})
 
         if not re.match(r'^[a-zA-Z]*$', first_name):
-            raise serializers.ValidationError({"first_name": "Имя должна содержать символы латиницы"})
+            raise serializers.ValidationError({"first_name": "First name must contain Latin characters"})
 
         if not re.match(r'^[a-zA-Z]*$', last_name):
-            raise serializers.ValidationError({"last_name": "Фамилия должна содержать символы латиницы"})
+            raise serializers.ValidationError({"last_name": "Last name must contain Latin characters"})
 
         if role == "ADMIN":
             raise serializers.ValidationError({"role": "You can choose just LESSOR or RENTER"})
@@ -52,7 +52,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(err.messages)
 
         if password != re_password:
-            raise serializers.ValidationError({"password": "Пароли не совпадают"})
+            raise serializers.ValidationError({"password": "Passwords don't match"})
 
         return attrs
 
