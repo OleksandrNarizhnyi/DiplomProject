@@ -5,8 +5,8 @@ class EmailAuthBackend(ModelBackend):
     def authenticate(self, request, email=None, password=None, **kwargs):
         UserModel = get_user_model()
         try:
-            user = UserModel.objects.get(email=email)  # Ищем пользователя по email
-            if user.check_password(password):  # Проверяем пароль
+            user = UserModel.objects.get(email=email)
+            if user.check_password(password):
                 return user
         except UserModel.DoesNotExist:
             return None
