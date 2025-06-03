@@ -143,6 +143,11 @@ REST_FRAMEWORK = {
     ]
 }
 
+AUTHENTICATION_BACKENDS = [
+    'booking.utils.auth_backends.EmailAuthBackend',  # Наш кастомный бэкенд
+    'django.contrib.auth.backends.ModelBackend',  # Стандартный (на случай, если нужен username)
+]
+
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {
