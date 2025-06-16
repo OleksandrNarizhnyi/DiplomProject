@@ -121,62 +121,6 @@ JWT ensures secure user access.
 Role-based permissions restrict actions (e.g., only landlords can edit listings).
 Unauthenticated users receive a 401 Unauthorized error for restricted endpoints.
 
-🌐 API Endpoints (Examples)
-
-
-
-Method
-Endpoint
-Description
-Access
-
-
-
-POST
-/api/register/
-Register a new user
-Public
-
-
-POST
-/api/token/
-Obtain JWT token
-Public
-
-
-POST
-/api/listings/
-Create a listing
-Landlords only
-
-
-GET
-/api/listings/
-List/filter listings
-All users
-
-
-PUT
-/api/listings/<id>/
-Update a listing
-Landlords only
-
-
-POST
-/api/bookings/
-Create a booking
-Tenants only
-
-
-POST
-/api/reviews/
-Submit a review
-Tenants (post-booking)
-
-
-Example Request:
-curl -H "Authorization: Bearer <your-token>" -X POST http://localhost:8000/api/listings/ -d '{"title": "Cozy Apartment", "price": 500}'
-
 
 📸 Screenshots
 To be added: Screenshots of the admin panel and API responses.
