@@ -7,31 +7,33 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## 🚀 Project Overview
-**Booking** is a fully functional backend for a rental property management system built with **Django**. It supports listing management, bookings, reviews, user roles, filtering, JWT authentication, REST API, testing, and deployment with Docker and MySQL/SQLite. The platform enables landlords and tenants to manage real estate rentals efficiently.
+**Booking** is a fully functional backend for a rental property management system built with **Django**. It supports user authentication, listing management, bookings, reviews, and filtering through a RESTful API. Deployable with Docker and MySQL/SQLite, it provides a robust platform for landlords to manage rental listings and tenants to book and review properties.
 
 ---
 
 ## ✨ Main Features
 - **User Management**:
-  - Registration and authentication for landlords and tenants.
+  - Register, log in, and log out users (landlords and tenants).
   - Role-based access control.
 - **Listing Management**:
-  - Create and edit rental listings with details (title, description, location, price, etc.).
+  - Create, update, and delete rental listings (title, description, location, price, etc.).
   - Toggle listing visibility (active/inactive).
 - **Search & Filtering**:
-  - Search properties by parameters (price, location, type).
+  - Filter listings by parameters (price, location, type).
   - Full-text search on listing details.
 - **Booking System**:
-  - Book properties for specific dates with availability checks.
+  - Create and manage bookings with availability checks.
+  - Confirm or reject bookings.
   - Cancel bookings within defined limits.
 - **Reviews**:
-  - Leave reviews and ratings after completed bookings.
+  - Submit and update reviews after completed bookings.
 - **Admin Panel**:
-  - Manage all entities (users, listings, bookings, reviews).
+  - Manage users, listings, bookings, and reviews.
 - **Notifications**:
   - Email notifications for key actions (e.g., booking confirmation).
-- **API & Testing**:
-  - RESTful API with comprehensive tests.
+- **API & Documentation**:
+  - RESTful API with Swagger and Redoc documentation.
+  - Comprehensive tests for reliability.
 
 ---
 
@@ -96,25 +98,31 @@
 ---
 
 ## 🔒 Authentication
-- **JWT** ensures secure user access.
-- Role-based permissions restrict actions (e.g., only landlords can edit listings).
+- **JWT** ensures secure user access via `/api/token/` and `/api/register/`.
+- Role-based permissions restrict actions (e.g., only landlords can create listings).
 - Unauthenticated users receive a `401 Unauthorized` error for restricted endpoints.
 
 ## 🌐 API Endpoints
-| Method | Endpoint                | Description                     | Access          |
-|--------|-------------------------|---------------------------------|-----------------|
-| POST   | `/api/register/`        | Register a new user             | Public          |
-| POST   | `/api/token/`           | Obtain JWT token                | Public          |
-| POST   | `/api/listings/`        | Create a listing                | Landlords only  |
-| GET    | `/api/listings/`        | List/filter listings            | All users       |
-| PUT    | `/api/listings/<id>/`   | Update a listing                | Landlords only  |
-| DELETE | `/api/listings/<id>/`   | Delete a listing                | Landlords only  |
-| POST   | `/api/bookings/`        | Create a booking                | Tenants only    |
-| POST   | `/api/reviews/`         | Submit a review                 | Tenants (post-booking) |
+| Method | Endpoint                          | Description                           | Access              |
+|--------|-----------------------------------|---------------------------------------|---------------------|
+| POST   | `/api/register/`                 | Register a new user                   | Public              |
+| POST   | `/api/login/`                    | Log in and obtain JWT token           | Public              |
+| POST   | `/api/logout/`                   | Log out user                          | Authenticated       |
+| GET    | `/swagger/`                      | View API documentation (Swagger)      | Public              |
+| GET    | `/redoc/`                        | View API documentation (Redoc)        | Public              |
+| GET/POST | `/api/rental/`                 | List or create rental listings        | All (GET), Landlords (POST) |
+| GET/PUT/DELETE | `/api/rental/<int:pk>/` | Retrieve, update, or delete a listing | All (GET), Landlords (PUT/DELETE) |
+| GET    | `/api/rental/<int:pk>/reviews/`  | List reviews for a listing            | All                 |
+| GET/POST | `/api/booking/`                | List or create bookings               | All (GET), Tenants (POST) |
+| GET/PUT | `/api/booking/<int:pk>/`       | Retrieve or update a booking          | Tenants             |
+| POST   | `/api/booking/<int:pk>/confirm/` | Confirm a booking                    | Landlords           |
+| POST   | `/api/booking/<int:pk>/reject/`  | Reject a booking                     | Landlords           |
+| GET/POST | `/api/reviews/`                | List or create reviews                | All (GET), Tenants (POST) |
+| GET/PUT | `/api/reviews/<int:pk>/`       | Retrieve or update a review           | Tenants             |
 
 **Example Request**:
 ```bash
-curl -H "Authorization: Bearer <your-token>" -X POST http://localhost:8000/api/listings/ -d '{"title": "Cozy Apartment", "price": 500}'
+curl -H "Authorization: Bearer <your-token>" -X POST http://localhost:8000/api/rental/ -d '{"title": "Cozy Apartment", "price": 500}'
 ```
 
 ---
